@@ -52,7 +52,8 @@ lineToPoint pClass line = point
 mainMethod :: Points -> Maybe Line
 mainMethod allPoints = findClassifier 0 initialLine allPoints
   where
-    initialLine = take numDimensions (repeat 1.0)
+--    initialLine = take numDimensions (repeat 1.0)
+    initialLine = [1.0,-1,0.0]
     numDimensions = (length.snd.head) allPoints
 
 
