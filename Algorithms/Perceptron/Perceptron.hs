@@ -44,8 +44,10 @@ lineToPoint pClass line = point
     point = (pClass, position ++ [1.0])
     position = map (getInt) splitLine
     getInt value = read (value) :: Float
-    splitLine = words (map (nonDigit) line)
-    nonDigit = (\x -> if isDigit x then x else ' ')
+    splitLine = words (map parseChar line)
+    parseChar = (\x -> if or [isDigit x, isMinus x] then x else ' ')
+      where
+        isMinus x' = x' == '-'
 
 
 -- Main method
@@ -53,7 +55,7 @@ mainMethod :: Points -> Maybe Line
 mainMethod allPoints = findClassifier 0 initialLine allPoints
   where
 --    initialLine = take numDimensions (repeat 1.0)
-    initialLine = [1.0,-1,0.0]
+    initialLine = [1.0,1.0,-2]
     numDimensions = (length.snd.head) allPoints
 
 
@@ -61,7 +63,7 @@ mainMethod allPoints = findClassifier 0 initialLine allPoints
 findClassifier :: Itteration -> Line -> Points -> Maybe Line
 findClassifier 1000 _ _ = Nothing
 findClassifier iter line points | isCorrect = Just line
-                                | otherwise = findClassifier (iter+1) newLine points
+                                | otherwise = traceShow (line, classifications) findClassifier (iter+1) newLine points
   where
      newLine = getNewLine line points classifications
      isCorrect = and classifications
